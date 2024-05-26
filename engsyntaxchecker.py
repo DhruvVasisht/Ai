@@ -13,14 +13,14 @@ def grammar_check(sentence):
     return True
 
 while True:
-    # Input a sentence from the user
+  
     user_sentence = input("Enter a sentence (type 'end' to finish): ")
 
-    # Check if the user wants to end
+  
     if user_sentence.lower() == 'end':
         break
 
-    # Check the grammar of the input sentence
+
     if grammar_check(user_sentence):
         print("Grammar is correct.")
     else:
