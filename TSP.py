@@ -1,66 +1,47 @@
-import sys
+def tsp(c):
+    global cost
+    minimum = float('inf')
+    nearest_city = float('inf')
+    for count in range(limit):
+        if matrix[c][count] != 0 and visited_cities[count] == 0:
+            if matrix[c][count] < minimum:
+                minimum = matrix[c][count]
+                nearest_city = count
+                
+    if minimum != float('inf'):
+        cost += minimum 
+    return nearest_city
+
+def minimum_cost(city):
+    global cost
+    visited_cities[city] = 1
+    print(city + 1, end=' ')
+    nearest_city = tsp(city)
+    if nearest_city == float('inf'):
+        nearest_city = 0
+        print(nearest_city + 1, end='')
+        cost = cost + matrix[city][nearest_city]
+        return
+    minimum_cost(nearest_city)
 
 
-def tsp(weights):
-    n = len(weights)
-    dp = [[sys.maxsize] * n for _ in range(2**n)]
-    dp[1][0] = 0 
+limit = int(input("Enter Total Number of elements:\t"))
+matrix = []
+visited_cities = [0] * limit 
+cost = 0
 
-    for mask in range(1, 2**n):
-        for j in range(n):
-            if mask & (1 << j):
-                for k in range(n):
-                    if (
-                        mask & (1 << k)
-                        and k != j
-                        and dp[mask ^ (1 << j)][k] != sys.maxsize
-                    ):
-                        dp[mask][j] = min(
-                            dp[mask][j], dp[mask ^ (1 << j)][k] + weights[k][j]
-                        )
-   
-    min_dist = sys.maxsize
-    last_city = None
-    for j in range(1, n):
-        if (
-            dp[2**n - 1][j] != sys.maxsize
-            and min_dist > dp[2**n - 1][j] + weights[j][0]
-        ):
-            min_dist = dp[2**n - 1][j] + weights[j][0]
-            last_city = j
+print("\nEnter Cost Matrix")
+for i in range(limit):
+    print(f"\nEnter {limit} Elements in Row[{i + 1}]")
+    row = list(map(int, input().split()))
+    matrix.append(row)
 
-  
-    path = [0]
-    mask = 2**n - 1
-    while mask != 1:  
-        for k in range(n):
-            if (
-                mask & (1 << k)
-                and k != last_city
-                and dp[mask][last_city]
-                == dp[mask ^ (1 << last_city)][k] + weights[k][last_city]
-            ):
-                path.append(last_city)
-                mask ^= 1 << last_city
-                last_city = k
-                break
+print("\nEntered Cost Matrix")
+for i in range(limit):
+    print()
+    for j in range(limit):
+        print(matrix[i][j], end=' ')
 
-    path.append(0)  
-    return path[::-1], min_dist  
-
-
-def print_path_and_distance(path, distance, weights):
-    print("Shortest path:", path)
-    print("Distance:", distance)
-
-
-if __name__ == "__main__":
-    weights = []
-    n = int(input("Enter the number of cities: "))
-    print("Enter the weighted matrix (separate elements by space):")
-    for _ in range(n):
-        row = list(map(int, input().split()))
-        weights.append(row)
-
-    shortest_path, shortest_distance = tsp(weights)
-    print_path_and_distance(shortest_path, shortest_distance, weights)
+print("\n\nPath:\t", end='')
+minimum_cost(0)
+print("\n\nMinimum Cost: \t",cost)
